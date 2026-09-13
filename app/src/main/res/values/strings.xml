@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Force Stop</string>
+
+    <string name="accessibility_service_label">Force Stop</string>
+    <string name="accessibility_service_summary">Taps “Force stop” in Settings for the apps you pick</string>
+    <string name="accessibility_service_description">Lets Force Stop drive the system Settings screen on your behalf. When you tap the button in the app, it opens “App info” for each app you selected and presses “Force stop”, then the confirmation. It only reads and acts on the Settings app — never on your other apps — and it does nothing unless you start a run.</string>
+
+    <string name="overlay_title">Stopping</string>
+    <string name="overlay_progress">%1$d of %2$d</string>
+</resources>

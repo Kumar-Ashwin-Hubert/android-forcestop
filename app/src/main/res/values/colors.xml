@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#B3261E</color>
+    <color name="overlay_background">#FF141218</color>
+    <color name="overlay_text">#FFE6E1E5</color>
+    <color name="overlay_text_muted">#FFCAC4D0</color>
+</resources>
