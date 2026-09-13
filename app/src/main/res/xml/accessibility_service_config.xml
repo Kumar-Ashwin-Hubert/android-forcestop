@@ -2,7 +2,7 @@
 <!--
   packageNames is deliberately restricted to the Settings app: the service can only
   read window content there, never in your other apps. If your OEM hosts "App info"
-  in a different package, add it here and to ForceStopAccessibilityService.
+  in a different package, add it here and to the <queries> block in AndroidManifest.xml.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"

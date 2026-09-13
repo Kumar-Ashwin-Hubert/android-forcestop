@@ -41,8 +41,9 @@ sequenceDiagram
     Svc->>App: Return with per-app results
 ```
 
-You never see the Settings screens — a full-screen overlay sits on top for the duration,
-showing which app is being stopped.
+When the overlay attaches you never see the Settings screens — a full-screen overlay sits
+on top for the duration, showing which app is being stopped. Attaching is best-effort: if
+it fails the run still proceeds, and you'll watch it happen.
 
 ## Requirements
 
@@ -93,18 +94,26 @@ deliberately fenced in:
 
 It also refuses to click anything it hasn't positively identified:
 
-> **`Uninstall` sits on the same row as `Force stop`.** So the button is located purely by
-> matching its visible text, never by view id or screen position, where an OEM layout
+> **`Uninstall` sits on the same row as `Force stop`.** So *that* button is located purely
+> by matching its visible text, never by view id or screen position, where an OEM layout
 > difference could land the tap one button over. The label is read out of the Settings
-> app's own string resources, which also makes it work on non-English devices.
+> app's own string resources, so it follows your device language — with a hardcoded English
+> fallback if that lookup fails, which is the case most likely to break on a heavily skinned
+> non-English device.
+
+The confirmation dialog is the one exception: its OK button is found by the framework id
+`android:id/button1` first, falling back to label matching. That id is an AOSP constant for
+the positive button of a standard dialog, not a guess at a position.
 
 ## Limitations
 
 - **Force stopping isn't permanent.** The app is gone until something wakes it — a push
   message, an alarm, a scheduled job, or you opening it. This buys you quiet, not a
   permanent block.
-- Roughly two seconds per app; the run is sequential because Settings shows one App info
-  page at a time.
+- The run is sequential, because Settings shows one App info page at a time. Per-app cost
+  depends on how fast your device settles; the timeouts in
+  [`ForceStopAccessibilityService.kt`](app/src/main/java/dev/ashwin/forcestop/service/ForceStopAccessibilityService.kt)
+  cap the worst case at roughly 14 seconds per app.
 - Success is confirmed by the Force stop button becoming disabled. On a skin that keeps it
   enabled, or that is unusually slow, you'll get `Tapped "Force stop" but the app never
   stopped` even though it may have worked.
