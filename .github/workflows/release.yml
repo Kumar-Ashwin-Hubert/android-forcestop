@@ -16,6 +16,9 @@ jobs:
   release:
     name: Build and publish
     runs-on: ubuntu-latest
+    # Scopes the signing key to this job. The environment's tag rule keeps it
+    # unreachable from any run that is not a v* tag.
+    environment: release
 
     steps:
       - uses: actions/checkout@v7
