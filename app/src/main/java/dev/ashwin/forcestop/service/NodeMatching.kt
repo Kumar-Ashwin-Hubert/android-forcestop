@@ -4,10 +4,10 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 private const val MAX_ANCESTOR_WALK = 5
 
-fun AccessibilityNodeInfo.labelText(): String? =
+private fun AccessibilityNodeInfo.labelText(): String? =
     (text ?: contentDescription)?.toString()?.trim()?.takeIf { it.isNotEmpty() }
 
-fun AccessibilityNodeInfo.labelEqualsAny(candidates: List<String>): Boolean {
+private fun AccessibilityNodeInfo.labelEqualsAny(candidates: List<String>): Boolean {
     val own = labelText() ?: return false
     return candidates.any { it.equals(own, ignoreCase = true) }
 }
