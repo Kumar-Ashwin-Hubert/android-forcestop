@@ -48,12 +48,14 @@ This app does exactly that, for a list you pick once, behind a single button.
 ## Features
 
 - **One tap, whole list.** Pick the apps once; the selection is remembered.
-- **You never see Settings.** A full-screen overlay covers the run and names the app being
-  stopped.
-- **Honest results.** Per-app outcome afterwards, failures first, each with a reason.
+- **Runs behind an overlay.** A full-screen panel covers the Settings screens it drives and
+  names the app being stopped. Attaching is best-effort — if it fails the run still
+  completes, you just watch it happen.
+- **Honest results.** Every app's outcome afterwards, failures listed first and carrying
+  the reason they failed.
 - **Search by name or package**, with a separate tab for reviewing your saved picks.
-- **Works in any language.** Button labels are read from the Settings app's own string
-  resources rather than hardcoded.
+- **Follows your device language.** Button labels are read from the Settings app's own
+  string resources rather than hardcoded, with an English fallback if that lookup fails.
 - **Nothing leaves the device.** No `INTERNET` permission, no analytics, no backup.
 - **Light and dark**, following the system setting.
 
