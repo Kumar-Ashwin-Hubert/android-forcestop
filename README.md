@@ -4,8 +4,8 @@
 
 **One tap to force-stop the apps you rarely open.**
 
-[![CI](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/actions/workflows/ci.yml/badge.svg)](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/Kumar-Ashwin-Hubert/android-forceclose?logo=github&color=3DDC84)](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/releases/latest)
+[![CI](https://github.com/Kumar-Ashwin-Hubert/android-forcestop/actions/workflows/ci.yml/badge.svg)](https://github.com/Kumar-Ashwin-Hubert/android-forcestop/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Kumar-Ashwin-Hubert/android-forcestop?logo=github&color=3DDC84)](https://github.com/Kumar-Ashwin-Hubert/android-forcestop/releases/latest)
 [![Android](https://img.shields.io/badge/Android-15%2B-3DDC84?logo=android&logoColor=white)](#requirements)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?logo=kotlin&logoColor=white)](#development)
 [![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](#development)
@@ -74,7 +74,7 @@ Developed and tested on Samsung One UI.
 ### From a release
 
 Download the APK from the
-[latest release](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/releases/latest)
+[latest release](https://github.com/Kumar-Ashwin-Hubert/android-forcestop/releases/latest)
 and open it on the device, or:
 
 ```bash
@@ -86,8 +86,8 @@ Every release publishes a `.sha256` alongside the APK if you want to verify it.
 ### From source
 
 ```bash
-git clone https://github.com/Kumar-Ashwin-Hubert/android-forceclose.git
-cd android-forceclose
+git clone https://github.com/Kumar-Ashwin-Hubert/android-forcestop.git
+cd android-forcestop
 ./gradlew :app:assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
