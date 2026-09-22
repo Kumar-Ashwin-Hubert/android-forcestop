@@ -262,17 +262,16 @@ and pull request.
 
 <br>
 
-[`release.yml`](.github/workflows/release.yml) builds and signs when a `v*` tag is pushed,
-then leaves the result as a **draft release**:
+[`release.yml`](.github/workflows/release.yml) builds, signs and publishes when a `v*` tag
+is pushed:
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Check the generated notes and the attached APK, then publish it by hand. A draft can be
-deleted and redone; a published release cannot, because the versionCode is spent the moment
-someone downloads it.
+Tag a commit whose CI run is green. CI assembles the release variant on every push, so by
+that point the signed build has already been exercised.
 
 The tag is the single source of truth for versioning — `v1.2.3` becomes versionName
 `1.2.3` and versionCode `10203`. Local builds stay at `0.0.0-dev` and are produced

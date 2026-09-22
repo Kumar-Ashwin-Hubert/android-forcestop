@@ -87,15 +87,12 @@ jobs:
           mv "$APK" "force-stop-${RELEASE_VERSION}.apk"
           sha256sum "force-stop-${RELEASE_VERSION}.apk" > "force-stop-${RELEASE_VERSION}.apk.sha256"
 
-      - name: Create draft release
+      - name: Publish release
         uses: softprops/action-gh-release@v3
         with:
           name: ${{ env.RELEASE_VERSION }}
           tag_name: v${{ env.RELEASE_VERSION }}
           generate_release_notes: true
-          # Published by hand. A bad draft can be deleted; a published release
-          # burns the versionCode, since users may already have the APK.
-          draft: true
           files: |
             force-stop-${{ env.RELEASE_VERSION }}.apk
             force-stop-${{ env.RELEASE_VERSION }}.apk.sha256
