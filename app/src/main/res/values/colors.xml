@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#B3261E</color>
-    <color name="overlay_background">#FF141218</color>
-    <color name="overlay_text">#FFE6E1E5</color>
-    <color name="overlay_text_muted">#FFCAC4D0</color>
+    <color name="ic_launcher_background">#1F1D1A</color>
+    <color name="window_background">#FAF8F5</color>
+
+    <!-- The run overlay is a full-screen takeover and stays dark in both themes. -->
+    <color name="overlay_background">#FF131211</color>
+    <color name="overlay_accent">#FF8FB9A3</color>
+    <color name="overlay_text">#FFF2EEE7</color>
+    <color name="overlay_text_muted">#FFA39C92</color>
+    <color name="overlay_text_faint">#FF7A736A</color>
+    <color name="overlay_track">#FF34312C</color>
 </resources>

@@ -5,17 +5,13 @@
     android:background="@color/overlay_background"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="32dp">
-
-    <ProgressBar
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminate="true" />
+    android:padding="44dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:fontFamily="@font/archivo"
+        android:letterSpacing="0.03"
         android:text="@string/overlay_title"
         android:textColor="@color/overlay_text_muted"
         android:textSize="14sp" />
@@ -24,16 +20,44 @@
         android:id="@+id/overlay_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="12dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/fraunces"
+        android:fontVariationSettings="'wght' 600, 'opsz' 48, 'SOFT' 20"
+        android:maxLines="1"
         android:textColor="@color/overlay_text"
-        android:textSize="24sp" />
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/overlay_package"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/archivo"
+        android:maxLines="1"
+        android:textColor="@color/overlay_text_faint"
+        android:textSize="13sp" />
+
+    <ProgressBar
+        android:id="@+id/overlay_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="200dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="34dp"
+        android:max="100"
+        android:maxHeight="4dp"
+        android:minHeight="4dp"
+        android:progressBackgroundTint="@color/overlay_track"
+        android:progressTint="@color/overlay_accent" />
 
     <TextView
         android:id="@+id/overlay_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="14dp"
+        android:fontFamily="@font/archivo"
         android:textColor="@color/overlay_text_muted"
-        android:textSize="15sp" />
+        android:textSize="13sp" />
 
 </LinearLayout>

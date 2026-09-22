@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.SurfaceControl
 import android.view.SurfaceControlViewHost
 import android.view.WindowManager
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.window.InputTransferToken
 import dev.ashwin.forcestop.R
@@ -35,11 +36,16 @@ class RunOverlay(private val service: AccessibilityService) {
             .onFailure { Log.w(TAG, "Could not attach the progress overlay", it) }
     }
 
-    fun update(label: String, index: Int, total: Int) {
+    fun update(target: AppTarget, index: Int, total: Int) {
         val root = host?.view ?: return
-        root.findViewById<TextView>(R.id.overlay_app).text = label
+        root.findViewById<TextView>(R.id.overlay_app).text = target.label
+        root.findViewById<TextView>(R.id.overlay_package).text = target.packageName
         root.findViewById<TextView>(R.id.overlay_progress).text =
             root.context.getString(R.string.overlay_progress, index, total)
+        root.findViewById<ProgressBar>(R.id.overlay_bar).apply {
+            max = total
+            setProgress(index, true)
+        }
     }
 
     fun hide(delayMs: Long = 0L) {

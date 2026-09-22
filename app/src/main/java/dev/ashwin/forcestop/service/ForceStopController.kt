@@ -17,7 +17,7 @@ data class StopResult(
 sealed interface RunState {
     data object Idle : RunState
 
-    data class Running(val label: String, val index: Int, val total: Int) : RunState
+    data class Running(val target: AppTarget, val index: Int, val total: Int) : RunState
 
     data class Finished(val results: List<StopResult>) : RunState
 }

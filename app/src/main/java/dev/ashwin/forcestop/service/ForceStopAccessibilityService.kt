@@ -33,8 +33,8 @@ private const val OVERLAY_EXIT_MS = 450L
 /**
  * Drives Settings > App info > Force stop for each selected app.
  *
- * The service is scoped to the Settings package in [R.xml.accessibility_service_config], so it
- * cannot read the contents of any other app, and it stays idle until the UI starts a run.
+ * The configuration filters Settings events, not window-content access. During a user-started
+ * run, [pollSettings] checks each active root's package before searching for or clicking controls.
  */
 class ForceStopAccessibilityService : AccessibilityService() {
 
@@ -85,8 +85,8 @@ class ForceStopAccessibilityService : AccessibilityService() {
 
         try {
             targets.forEachIndexed { index, target ->
-                ForceStopController.publish(RunState.Running(target.label, index + 1, targets.size))
-                overlay.update(target.label, index + 1, targets.size)
+                ForceStopController.publish(RunState.Running(target, index + 1, targets.size))
+                overlay.update(target, index + 1, targets.size)
                 results += stopOne(target)
             }
             performGlobalAction(GLOBAL_ACTION_BACK)
