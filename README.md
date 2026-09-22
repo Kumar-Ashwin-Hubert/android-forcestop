@@ -4,6 +4,8 @@
 
 **One tap to force-stop the apps you rarely open.**
 
+[![CI](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/actions/workflows/ci.yml/badge.svg)](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Kumar-Ashwin-Hubert/android-forceclose?logo=github&color=3DDC84)](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/releases/latest)
 [![Android](https://img.shields.io/badge/Android-15%2B-3DDC84?logo=android&logoColor=white)](#requirements)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?logo=kotlin&logoColor=white)](#development)
 [![Jetpack Compose](https://img.shields.io/badge/Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](#development)
@@ -67,7 +69,19 @@ Developed and tested on Samsung One UI.
 
 ## Install
 
-No prebuilt APK is published, so build it yourself:
+### From a release
+
+Download the APK from the
+[latest release](https://github.com/Kumar-Ashwin-Hubert/android-forceclose/releases/latest)
+and open it on the device, or:
+
+```bash
+adb install -r force-stop-<version>.apk
+```
+
+Every release publishes a `.sha256` alongside the APK if you want to verify it.
+
+### From source
 
 ```bash
 git clone https://github.com/Kumar-Ashwin-Hubert/android-forceclose.git
@@ -77,6 +91,10 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
 Or open the project in Android Studio and hit **Run**.
+
+> [!NOTE]
+> Release APKs and locally built debug APKs are signed with different keys, so Android
+> won't update one to the other. Uninstall first — which clears your saved selection.
 
 ## Setup
 
@@ -233,6 +251,42 @@ if your device animates slowly.
 ./gradlew :app:assembleDebug        # build
 ./gradlew :app:testDebugUnitTest    # unit tests
 ```
+
+[`ci.yml`](.github/workflows/ci.yml) runs the tests and both build variants on every push
+and pull request.
+
+<details>
+<summary><b>Cutting a release</b></summary>
+
+<br>
+
+[`release.yml`](.github/workflows/release.yml) builds, signs and publishes when a `v*` tag
+is pushed:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The tag is the single source of truth for versioning — `v1.2.3` becomes versionName
+`1.2.3` and versionCode `10203`. Local builds stay at `0.0.0-dev` and are produced
+unsigned, so nothing outside CI can accidentally claim a released version.
+
+Four repository secrets are required:
+
+| Secret | Value |
+| --- | --- |
+| `RELEASE_KEYSTORE_BASE64` | The keystore file, base64-encoded |
+| `RELEASE_KEYSTORE_PASSWORD` | Keystore password |
+| `RELEASE_KEY_ALIAS` | Key alias |
+| `RELEASE_KEY_PASSWORD` | Key password |
+
+> [!CAUTION]
+> Back the keystore up somewhere outside this repository. Android ties an installed app to
+> its signing key, so if the key is lost or changed, every user has to uninstall and
+> reinstall — losing their saved selection. There is no recovery path.
+
+</details>
 
 <details>
 <summary><b>Project layout</b></summary>

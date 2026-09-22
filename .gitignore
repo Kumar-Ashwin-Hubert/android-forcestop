@@ -11,3 +11,7 @@ captures/
 *.keystore
 !debug.keystore
 design-review/
+
+# Release signing material must never be committed.
+*.jks
+keystore.properties

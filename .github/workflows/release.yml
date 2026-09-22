@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build, e.g. 1.0.0'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-37 build-tools;36.0.0'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Resolve version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::Version '$VERSION' is not MAJOR.MINOR.PATCH"
+            exit 1
+          fi
+          echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Building $VERSION"
+
+      - name: Unit tests
+        run: ./gradlew :app:testDebugUnitTest
+
+      - name: Decode signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::RELEASE_KEYSTORE_BASE64 secret is not set"
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          echo "RELEASE_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+
+      - name: Assemble signed release
+        env:
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease
+
+      - name: Verify the APK is signed
+        run: |
+          APK=$(find app/build/outputs/apk/release -name '*.apk' ! -name '*unsigned*' | head -n 1)
+          if [ -z "$APK" ]; then
+            echo "::error::No signed APK was produced"
+            exit 1
+          fi
+          BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --print-certs "$APK"
+          mv "$APK" "force-stop-${RELEASE_VERSION}.apk"
+          sha256sum "force-stop-${RELEASE_VERSION}.apk" > "force-stop-${RELEASE_VERSION}.apk.sha256"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ env.RELEASE_VERSION }}
+          tag_name: v${{ env.RELEASE_VERSION }}
+          generate_release_notes: true
+          files: |
+            force-stop-${{ env.RELEASE_VERSION }}.apk
+            force-stop-${{ env.RELEASE_VERSION }}.apk.sha256
+          body: |
+            Sideload with:
+
+            ```bash
+            adb install -r force-stop-${{ env.RELEASE_VERSION }}.apk
+            ```
+
+            After installing, grant the accessibility service and the
+            display-over-other-apps permission from the app's setup card.
+
+            > Updating in place keeps your saved selection. Switching between a
+            > release APK and a locally built debug APK does not — they are signed
+            > with different keys, so you must uninstall first.
+
+      - name: Remove keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"

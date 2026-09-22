@@ -3,6 +3,21 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Release builds take their version from the git tag the workflow passes in. Local builds
+// fall back to 0.0.0-dev, which is deliberately below any published versionCode.
+val releaseVersion: String = System.getenv("RELEASE_VERSION")?.removePrefix("v").orEmpty()
+
+// Absent outside CI, so a local `assembleRelease` produces an unsigned APK instead of failing.
+val releaseKeystore: String? = System.getenv("RELEASE_KEYSTORE_PATH")
+
+fun versionCodeFrom(version: String): Int {
+    val parts = version.substringBefore('-').split('.')
+    val major = parts.getOrNull(0)?.toIntOrNull() ?: 0
+    val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
+    val patch = parts.getOrNull(2)?.toIntOrNull() ?: 0
+    return (major * 10_000 + minor * 100 + patch).coerceAtLeast(1)
+}
+
 android {
     namespace = "dev.ashwin.forcestop"
     compileSdk = 37
@@ -11,12 +26,24 @@ android {
         applicationId = "dev.ashwin.forcestop"
         minSdk = 35
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = versionCodeFrom(releaseVersion)
+        versionName = releaseVersion.ifEmpty { "0.0.0-dev" }
+    }
+
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
