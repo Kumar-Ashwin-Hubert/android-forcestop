@@ -41,13 +41,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Resolve version
+        env:
+          RELEASE_INPUT: ${{ inputs.version }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ inputs.version }}"
+            VERSION="$RELEASE_INPUT"
           else
             VERSION="${GITHUB_REF_NAME#v}"
           fi
-          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
             echo "::error::Version '$VERSION' is not MAJOR.MINOR.PATCH"
             exit 1
           fi

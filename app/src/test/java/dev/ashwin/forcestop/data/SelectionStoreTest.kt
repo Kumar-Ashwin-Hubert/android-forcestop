@@ -69,6 +69,7 @@ class SelectionStoreTest {
         assertEquals(SelectionError.SAVE, store.state.value.error)
         assertEquals(setOf("saved.app"), store.state.value.packages)
         assertFalse(store.state.value.ready)
+        assertFalse(store.state.value.usable)
         store.clear()
         assertEquals(1, disk.writes)
 
@@ -119,6 +120,30 @@ class SelectionStoreTest {
         assertEquals(null, store.state.value.error)
         assertFalse(store.state.value.saving)
         assertEquals(setOf("saved.app"), store.state.value.packages)
+    }
+
+    @Test
+    fun queuedTogglesAreSavedAfterThePendingWriteCompletes() = runTest {
+        val disk = TestDataStore().apply { writeGate = CompletableDeferred() }
+        val store = SelectionStore(disk)
+        backgroundScope.launch { store.observe() }
+        runCurrent()
+
+        val firstWrite = launch { store.toggle("first.app") }
+        runCurrent()
+        val secondWrite = launch { store.toggle("second.app") }
+        runCurrent()
+        assertEquals(1, disk.writes)
+        assertFalse(store.state.value.ready)
+        assertTrue(store.state.value.usable)
+
+        disk.writeGate?.complete(Unit)
+        firstWrite.join()
+        secondWrite.join()
+
+        assertEquals(2, disk.writes)
+        assertEquals(setOf("saved.app", "first.app", "second.app"), store.state.value.packages)
+        assertTrue(store.state.value.ready)
     }
 
     @Test
