@@ -27,7 +27,8 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
         with:
-          packages: 'platform-tools platforms;android-37 build-tools;36.0.0'
+          # Platforms are versioned major.minor now; 'platforms;android-37' does not exist.
+          packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
